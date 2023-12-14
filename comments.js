@@ -1,23 +1,24 @@
 // Create new web server
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-// Import comments controller
-const commentsController = require("../controllers/comments.js");
-// Import authentication middleware
-const auth = require("../middleware/auth.js");
+const Comment = require('../models/Comment');
 
-// Create new comment
-router.post("/comments", auth, commentsController.createComment);
 // Get all comments
-router.get("/comments", auth, commentsController.getAllComments);
-// Get all comments by post
-router.get("/comments/post/:postId", auth, commentsController.getCommentsByPost);
-// Get all comments by user
-router.get("/comments/user/:userId", auth, commentsController.getCommentsByUser);
-// Update comment by id
-router.patch("/comments/:id", auth, commentsController.updateComment);
-// Delete comment by id
-router.delete("/comments/:id", auth, commentsController.deleteComment);
+router.get('/', async (req, res) => {
+    try {
+        const comments = await Comment.find();
+        res.json(comments);
+    } catch (err) {
+        res.json({ message: err });
+    }
+});
 
-module.exports = router;
-
+// Get specific comment
+router.get('/:commentId', async (req, res) => {
+    try {
+        const comment = await Comment.findById(req.params.commentId);
+        res.json(comment);
+    } catch (err) {
+        res.json({ message: err });
+    }
+});
